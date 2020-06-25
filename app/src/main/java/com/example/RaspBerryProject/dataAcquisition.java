@@ -35,13 +35,9 @@ public class dataAcquisition {
     private ArrayList<Model> theList;
     private RequestQueue myQueue;
     private LineChart mChart;
-    private float tempY;
-    private float pressureY;
-    private Model mod;
     private int mode;
     private String desc;
     private List<Entry> finalValues;
-    private AsyncTask runingTask;
 
     dataAcquisition(Context context, LineChart lineChart) {
         myQueue = Volley.newRequestQueue(context);
@@ -72,15 +68,12 @@ public class dataAcquisition {
                         model.setHumidity(jsonObject.getString("Humidity"));
                         model.setPressure(jsonObject.getString("Pressure"));
                         if (!model.getDate().equalsIgnoreCase("null")) {
-                            //Log.d("Volley", "Null");
                             Log.d("Volley", "Data added");
                             theList.add(model);
                         }
                     }
                     addEntry(theList);
                 } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (ParseException e) {
                     e.printStackTrace();
                 }
             }
@@ -93,7 +86,7 @@ public class dataAcquisition {
         myQueue.add(request);
     }
 
-    private void addEntry(ArrayList<Model> list) throws ParseException {
+    private void addEntry(ArrayList<Model> list) {
         finalValues = null;
         final List<Entry> tempValues = new ArrayList<>();
         final List<Entry> pressureValues = new ArrayList<>();
@@ -123,19 +116,21 @@ public class dataAcquisition {
         mChart.invalidate();
     }
 
+    //We fix our lists by adding the correct values to the appropriate list
     private void listFixing(ArrayList<Model> list, List<Entry> valueList, int id){
         for (int i = list.size() - 5; i < list.size(); i++) {
-            mod = list.get(i);
-            tempY = Float.parseFloat(mod.getTemp());
-            pressureY = Float.parseFloat(mod.getPressure());
+            Model mod = list.get(i);
+            float tempY = Float.parseFloat(mod.getTemp());
+            float pressureY = Float.parseFloat(mod.getPressure());
             if(id == 1){
-                valueList.add(new Entry(i,tempY));
+                valueList.add(new Entry(i, tempY));
             } else if (id == 2){
-                valueList.add(new Entry(i,pressureY));
+                valueList.add(new Entry(i, pressureY));
             }
         }
     }
 
+    //We style our chart a bit more here
     private void chartStyling(LineData myData) {
         myData.setValueTextSize(13);
         mChart.setKeepPositionOnRotation(false);
@@ -149,12 +144,14 @@ public class dataAcquisition {
         mChart.setBorderColor(Color.RED);
     }
 
+    //We fix the labels for the chart, we wanted time to be shown
     private void labelFixing(ArrayList<Model> list, String[] xLabels){
         for(int i=list.size()-5;i<xLabels.length;i++){
             xLabels[i] = list.get(i).getTime();
         }
     }
 
+    //Here we fix the xAxis labels for the chart
     private void xAxisFixing(final String[] xLabels){
         XAxis xAxis = mChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -170,6 +167,7 @@ public class dataAcquisition {
         });
     }
 
+    //Depending on the checked radio button, the data alternates between temperature and pressure
     private LineDataSet dataSetFixing(List<Entry> tempValues, List<Entry> pressureValues){
         if(mode == 1){
             finalValues = tempValues;

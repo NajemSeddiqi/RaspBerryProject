@@ -29,7 +29,9 @@ public final class Networking extends AsyncTask {
         return null;
     }
 
+    //We SSH into our raspberry and run the appropriate python script to start the sensor
     private List<String> runCommand() throws JSchException {
+        //we need a sessions
         Session session = getExec();
         session.connect();
         ChannelExec channel = (ChannelExec) session.openChannel("exec");
@@ -45,13 +47,14 @@ public final class Networking extends AsyncTask {
         } catch (JSchException | IOException e) {
             closeConnection(channel, session);
             throw new RuntimeException(e);
-
+        //we make sure the sessions and channel are closed
         } finally {
             closeConnection(channel, session);
             Log.d("Session", "Ended");
         }
     }
 
+    //This is where we configure our ssh session
     private static Session getExec() throws JSchException {
         Session session = new JSch().getSession("pi", "192.168.20.40", 22);
         session.setPassword("");
@@ -60,6 +63,7 @@ public final class Networking extends AsyncTask {
         return session;
     }
 
+    //We disconnect the channel and session to release resources
     private static void closeConnection(ChannelExec channel, Session session) {
         try {
             channel.disconnect();
