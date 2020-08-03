@@ -10,9 +10,8 @@ import android.view.MenuItem;
 import com.github.mikephil.charting.charts.LineChart;
 
 public class MainActivity extends AppCompatActivity {
-    LineChart mpLineChart;
-    dataAcquisition data;
-    AsyncTask runningTask;
+    private LineChart mpLineChart;
+    private DataAcquisition data;
     public static boolean status;
 
     @Override
@@ -20,9 +19,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mpLineChart = findViewById(R.id.line_chart);
-        data = new dataAcquisition(this, mpLineChart);
+        data = new DataAcquisition(this, mpLineChart);
         data.setDesc("Pressure");
-        runningTask = new Networking();
+        AsyncTask runningTask = new Networking();
         runningTask.execute("");
         data.handler();
     }
@@ -35,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
+        switch (item.getItemId()) {
             case R.id.menu_item_1:
                 data.setMode(1);
                 data.setDesc("Temperature");

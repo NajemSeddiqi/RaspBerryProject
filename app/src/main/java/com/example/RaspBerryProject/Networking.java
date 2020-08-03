@@ -31,7 +31,7 @@ public final class Networking extends AsyncTask {
 
     //We SSH into our raspberry and run the appropriate python script to start the sensor
     private List<String> runCommand() throws JSchException {
-        //we need a sessions
+        //we need a session
         Session session = getExec();
         session.connect();
         ChannelExec channel = (ChannelExec) session.openChannel("exec");
@@ -69,6 +69,5 @@ public final class Networking extends AsyncTask {
             channel.disconnect();
         } catch (Exception ignored) {
         }
-        session.disconnect();
     }
 }

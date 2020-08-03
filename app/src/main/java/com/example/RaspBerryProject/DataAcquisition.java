@@ -2,7 +2,6 @@ package com.example.RaspBerryProject;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
@@ -31,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class dataAcquisition {
+public class DataAcquisition {
     private ArrayList<Model> theList;
     private RequestQueue myQueue;
     private LineChart mChart;
@@ -39,7 +38,7 @@ public class dataAcquisition {
     private String desc;
     private List<Entry> finalValues;
 
-    dataAcquisition(Context context, LineChart lineChart) {
+    DataAcquisition(Context context, LineChart lineChart) {
         myQueue = Volley.newRequestQueue(context);
         mChart = lineChart;
     }
@@ -49,7 +48,9 @@ public class dataAcquisition {
         this.mode = mode;
     }
 
-    public void setDesc(String desc) { this.desc = desc; }
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
 
     //Volley request that adds data to object Model
     private void parsedData() {
@@ -104,7 +105,7 @@ public class dataAcquisition {
         //Dataset calls on dataSetFixing which styles and checks which mode the user has set
         //the app on, changes in real time
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-        dataSets.add(dataSetFixing(tempValues,pressureValues));
+        dataSets.add(dataSetFixing(tempValues, pressureValues));
         LineData tempData = new LineData(dataSets);
 
         //More styling
@@ -117,14 +118,14 @@ public class dataAcquisition {
     }
 
     //We fix our lists by adding the correct values to the appropriate list
-    private void listFixing(ArrayList<Model> list, List<Entry> valueList, int id){
+    private void listFixing(ArrayList<Model> list, List<Entry> valueList, int id) {
         for (int i = list.size() - 5; i < list.size(); i++) {
             Model mod = list.get(i);
             float tempY = Float.parseFloat(mod.getTemp());
             float pressureY = Float.parseFloat(mod.getPressure());
-            if(id == 1){
+            if (id == 1) {
                 valueList.add(new Entry(i, tempY));
-            } else if (id == 2){
+            } else if (id == 2) {
                 valueList.add(new Entry(i, pressureY));
             }
         }
@@ -145,21 +146,21 @@ public class dataAcquisition {
     }
 
     //We fix the labels for the chart, we wanted time to be shown
-    private void labelFixing(ArrayList<Model> list, String[] xLabels){
-        for(int i=list.size()-5;i<xLabels.length;i++){
+    private void labelFixing(ArrayList<Model> list, String[] xLabels) {
+        for (int i = list.size() - 5; i < xLabels.length; i++) {
             xLabels[i] = list.get(i).getTime();
         }
     }
 
     //Here we fix the xAxis labels for the chart
-    private void xAxisFixing(final String[] xLabels){
+    private void xAxisFixing(final String[] xLabels) {
         XAxis xAxis = mChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularityEnabled(true);
         xAxis.setGranularity(1f);
         xAxis.setDrawGridLines(true);
         //ValueFormatters formats the xAxis value from a regular int to different labels
-        xAxis.setValueFormatter(new IndexAxisValueFormatter(){
+        xAxis.setValueFormatter(new IndexAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
                 return xLabels[(int) value];
@@ -168,21 +169,21 @@ public class dataAcquisition {
     }
 
     //Depending on the checked radio button, the data alternates between temperature and pressure
-    private LineDataSet dataSetFixing(List<Entry> tempValues, List<Entry> pressureValues){
-        if(mode == 1){
+    private LineDataSet dataSetFixing(List<Entry> tempValues, List<Entry> pressureValues) {
+        if (mode == 1) {
             finalValues = tempValues;
-        } else if(mode == 0){
+        } else if (mode == 0) {
             finalValues = pressureValues;
         }
 
         LineDataSet tempSetLine = new LineDataSet(finalValues, "Set 1");
         tempSetLine.setLineWidth(4f);
-        tempSetLine.enableDashedLine(10f,5f,0f);
+        tempSetLine.enableDashedLine(10f, 5f, 0f);
         tempSetLine.setCircleColor(Color.BLACK);
 
-        if(mode == 1){
+        if (mode == 1) {
             tempSetLine.setColor(Color.RED);
-        } else if(mode == 0){
+        } else if (mode == 0) {
             tempSetLine.setColor(Color.BLUE);
         }
         return tempSetLine;
